@@ -93,7 +93,7 @@ def main():
         
         print(f"  Running Gmsh in: {folder_path}")
         result = subprocess.run(
-            [gmsh_path, "-3", "electromagPayload.geo", "-o", "output.msh"],
+            [gmsh_path, "-3", "electromagPayload.geo", "-o", "output.msh", "-scale", "0.001"],
             cwd=folder_path,
             capture_output=True,
             text=True)
@@ -111,10 +111,12 @@ def main():
 
     elmer.execute.run_multicore(number_of_proses, list_of_dir_str, list_of_mesh, elmer_grid_path, elmer_solver_path)
 
+'''
+
     magnetic_energy = []
 
     for i in range(number_of_samples):
-        with open(list_of_dir[i] / "magnetic_energy.dat", 'r') as text:
+        with open(list_of_dir[i] / "forces_and_energy.dat", 'r') as text:
             magnetic_energy.append(float(text.read().split()[0]))
         print(magnetic_energy[i])
 
@@ -129,6 +131,7 @@ def main():
 
     return 0
 
+'''
 
 if __name__ == "__main__":
     exit(main())

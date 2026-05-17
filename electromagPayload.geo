@@ -18,13 +18,13 @@ Characteristic Length{ pasiv_surfaces[] } = 3;
 
 Box(4) = {-400, -400, -400, 800, 800, 800};
 
-BooleanDifference(5) = { Volume{4}; Delete; }{ Volume{coil(), backplain(), pasiv()}; };
+BooleanDifference(5) = { Volume{4}; Delete; }{ Volume{coil_vol, backplain_vol, pasiv_vol}; };
 
 Coherence;
 
-Physical Volume("coil_volume") = {coil()};
-Physical Volume("backplain_volume") = {backplain()};
-Physical Volume("pasive_volume") = {pasiv()};
+Physical Volume("coil_volume") = {coil_vol};
+Physical Volume("backplain_volume") = {backplain_vol};
+Physical Volume("pasive_volume") = {pasiv_vol};
 Physical Volume("air_volume") = {5};
 
 Mesh.CharacteristicLengthMax = 60;
