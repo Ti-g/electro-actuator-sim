@@ -5,6 +5,32 @@ import cadquery as cq
 import subprocess
 import pyelmer as elmer
 
+def get_force_vec(sample_num, list_of_dir):
+    sum_force_vec = [0.0, 0.0, 0.0]
+    back_plain_force_vec = [0.0, 0.0, 0.0]
+    coil_force_vec = [0.0, 0.0, 0.0]
+    dynamic_object_force_vec = [0.0, 0.0, 0.0]
+
+    with open(list_of_dir[sample_num] / "forces.dat", 'r') as text:
+        values = text.read().split()
+#    print(values)
+
+    for dimension in range(3):
+        #first vec starts at second element, and then they are spaced by 3 values then on
+
+        back_plain_force_vec[dimension] = float(values[2 + dimension]) 
+#        print(back_plain_force_vec)
+        coil_force_vec[dimension] = float(values[5 + dimension])
+#        print(coil_force_vec)
+        dynamic_object_force_vec[dimension] = float(values[8 + dimension])
+#        print(dynamic_object_force_vec)
+
+    for dimension in range(3):
+        sum_force_vec[dimension] = (back_plain_force_vec[dimension] + coil_force_vec[dimension])-dynamic_object_force_vec[dimension]
+
+    return sum_force_vec
+
+
 def main():
     # File paths
     dynamic_object_path = Path("pasiveElement.step")
@@ -111,27 +137,18 @@ def main():
 
     elmer.execute.run_multicore(number_of_proses, list_of_dir_str, list_of_mesh, elmer_grid_path, elmer_solver_path)
 
-'''
 
-    magnetic_energy = []
-
-    for i in range(number_of_samples):
-        with open(list_of_dir[i] / "forces_and_energy.dat", 'r') as text:
-            magnetic_energy.append(float(text.read().split()[0]))
-        print(magnetic_energy[i])
-
-    force = []
+    forcses = []
+    force_vec = []
 
     for i in range(number_of_samples):
-        if i != 0:
-            force.append((magnetic_energy[i] - magnetic_energy[i-1])/displacement_step)
-        else:
-            force.append(float('nan'))
-        print(force[i])
+        forcses.append(get_force_vec(i, list_of_dir))
+    
+    print(forcses)
 
     return 0
 
-'''
+
 
 if __name__ == "__main__":
     exit(main())
