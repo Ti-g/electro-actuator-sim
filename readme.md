@@ -20,3 +20,11 @@ C:.
         equations.py
         solver.py
 ```
+
+### Installation
+
+To run the analytical model the following packages are required:
+
+```
+pip install picounits matplotlib
+```

@@ -15,6 +15,7 @@
     "xlabel",
     "fontsize",
     "figsize",
-    "linestyle"
+    "linestyle",
+    "matplotlib"
   ]
 }
