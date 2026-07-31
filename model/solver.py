@@ -37,7 +37,7 @@ class Solver:
         pos = self._compute_energy_state(z_pos + self.int_step_size, self.int_step_size)
         neg = self._compute_energy_state(z_pos - self.int_step_size, self.int_step_size)
 
-        return - (pos - neg) / (2 * self.int_step_size)
+        return - 4 * (pos - neg) / (2 * self.int_step_size)
 
     def _compute_energy_state(
         self, translate: f, dz: f, epsilon: float = 1e-8, window: int = 5
