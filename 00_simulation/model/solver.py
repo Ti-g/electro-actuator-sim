@@ -18,7 +18,7 @@ from model import equations
 class Solver:
     """
     Magnetic Solver for voice coil problem.
-    COmputes electromagnetic force using magnetic energy and virtual work methods.
+    Computes electromagnetic force using magnetic energy and virtual work methods.
     """
     def __init__(self, parameters: DynamicLoader) -> None:
         """ Initializes the solver class """
@@ -71,7 +71,7 @@ class Solver:
             h_magnet = equations.compute_pole_z_field_strength(
                 z,
                 0,
-                self.pole_axial_length, 
+                self.pole_axial_length,
                 self.coercivity
             )
 
@@ -85,7 +85,7 @@ class Solver:
                 below_epsilon = 0
 
             # Breaks loop if below epsilon for more than window iterations
-            if below_epsilon >= window: 
+            if below_epsilon >= window:
                 break
 
             # Moves along the z-axis
