@@ -40,11 +40,11 @@ $$
 
 The model was constructed using `picounits` and implements the virtual work method using the limit of the field in $(-z, z)$:
 
-$$ U = A_{\text{rad}} \cdot \mu_0 \cdot \lim_{N \to \infty} \sum_{i=1}^{N} \left( H_{\text{coil}}(z-z_{t}) \cdot H_{\text{stator}}(z) \right) \, dz $$
+$$ U = A_{\text{rad}} \cdot \mu_0 \cdot \lim_{N \to \infty} \sum_{i=1}^{N} \left( H_{\text{coil}}(z-z_{t}) \cdot H_{\text{pole}}(z) \right) \, dz $$
 
 $$ \Omega = \{ z \mid |H_{\text{coil}}(z)| > \varepsilon \quad \text{or} \quad |H_{\text{pole}}(z)| > \varepsilon \}$$
 
-The parameter file for the simulation can be found [here](./00_simulation/parameters.uiv).
+The $A_{\text{rad}}$ is the effective area the magnetic field strength is passing through. The parameter file for the simulation can be found [here](./00_simulation/parameters.uiv).
 
 <div align="center">
   <img src="01_media/force_vs_position.png" alt="Force vs position example" style="max-width:600px;">
