@@ -37,7 +37,7 @@ class Solver:
         pos = self._compute_energy_state(z_pos + self.int_step_size, self.int_step_size)
         neg = self._compute_energy_state(z_pos - self.int_step_size, self.int_step_size)
 
-        return - 4 * (pos - neg) / (2 * self.int_step_size)
+        return - (pos - neg) / (2 * self.int_step_size)
 
     def _compute_energy_state(
         self, translate: f, dz: f, epsilon: float = 1e-8, window: int = 5
@@ -58,25 +58,12 @@ class Solver:
         below_epsilon = 0
 
         while True:
-            # Computes the coil field strength at z
-            h_coil = equations.compute_coil_z_field_strength(
-                z, translate,
-                self.current,
-                self.stage_turns,
-                self.coil_axial_length,
-                self.coil_mean_radius
-            )
-
-            # Computes the magnet field strength at z
-            h_magnet = equations.compute_pole_z_field_strength(
-                z,
-                0,
-                self.pole_axial_length,
-                self.coercivity
-            )
+            # Computes field strength of pole & coil at z
+            h_pole = self._compute_dipole_field_strength(z, translate)
+            h_coil = self._compute_coil_field_strength(z)
 
             # Computes the co-energy from that interaction
-            interaction = h_coil * h_magnet
+            interaction = h_coil * h_pole
             interactions.append(interaction)
 
             if abs(interaction) <= epsilon:
@@ -93,16 +80,49 @@ class Solver:
 
         return interactions
 
+    def _compute_dipole_field_strength(self, z: f, translate: f) -> f:
+        """ Computes the magnetic field strength from the dipole at position z. """
+        return equations.compute_dipole_z_field_strength(
+            z,
+            translate,
+            self.magnet_axial_length,
+            self.coercivity
+        )
+
+    def _compute_coil_field_strength(self, z: f) -> f:
+        """ Computes the magnetic field strength from the coil at position z. """
+        field_strength = 0.0
+        half_length = self.coil_axial_length / 2
+
+        # Calculates the positive dipole
+        field_strength += equations.compute_coil_z_field_strength(
+            z + half_length,
+            self.current,
+            self.stage_turns / 2,
+            half_length,
+            self.coil_mean_radius
+        )
+
+        # Calculates the negative dipole
+        field_strength += equations.compute_coil_z_field_strength(
+            z - half_length,
+            - self.current,
+            self.stage_turns / 2,
+            half_length,
+            self.coil_mean_radius
+        )
+        return field_strength
+
     def _compute_derived_values(self) -> None:
         """ Computes derived values based on parameters """
-        self.coil_inner_radius = self.pole_radial_thickness + self.radial_clearance
+        self.coil_inner_radius = self.magnet_radial_thickness + self.radial_clearance
         self.coil_mean_radius = self.coil_inner_radius + self.coil_radial_thickness / 2
         self.effective_area = pi * self.coil_mean_radius ** 2
 
         # Computes the number of turns and inductance
         self.stage_turns = equations.compute_turns(
-            self.coil_axial_length, 
-            self.coil_radial_thickness, 
+            self.coil_axial_length,
+            self.coil_radial_thickness,
             self.wire_diameter,
             self.fill_factor
         )
@@ -123,12 +143,8 @@ class Solver:
             resistivity
         )
 
-        # Computes the equivalent resistance and inductance
-        self.total_resistance = self.stage_resistance / 4
-        self.total_inductance = self.stage_inductance / 4
-
         # Computes the total current carrying capacity
-        self.current = self.line_voltage / self.total_resistance
+        self.current = self.line_voltage / self.stage_resistance
 
     def _extract_validate(self, parameters: DynamicLoader) -> None:
         """ Extracts qualities from attribute tree and validates units """
@@ -137,14 +153,14 @@ class Solver:
         self.line_voltage = validate(parameters.numerics.line_voltage, voltage)
 
         # Coil
-        self.radial_clearance = validate(parameters.coil.pole_radial_clearance, length)
+        self.radial_clearance = validate(parameters.coil.magnet_radial_clearance, length)
         self.coil_radial_thickness = validate(parameters.coil.radial_thickness, length)
         self.coil_axial_length = validate(parameters.coil.axial_length, length)
         self.wire_diameter = validate(parameters.coil.wire_diameter, length)
         self.conductivity = validate(parameters.coil.conductivity, conductivity)
         self.fill_factor = validate(parameters.coil.fill_factor, nullset)
 
-        # Pole
-        self.coercivity = validate(parameters.pole.coercivity, coercivity)
-        self.pole_radial_thickness = validate(parameters.pole.radial_thickness, length)
-        self.pole_axial_length = validate(parameters.pole.axial_length, length)
+        # Magnet
+        self.coercivity = validate(parameters.magnet.coercivity, coercivity)
+        self.magnet_radial_thickness = validate(parameters.magnet.radial_thickness, length)
+        self.magnet_axial_length = validate(parameters.magnet.axial_length, length)

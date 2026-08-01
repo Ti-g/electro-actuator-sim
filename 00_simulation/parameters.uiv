@@ -5,26 +5,27 @@ unit_frame: metric.ut
 [notes]
 type: "Electromagnetic Parameter File"
 application: "Reduced Order Model | Voice Coil"
-coordinate_system: "Axial-symmetric (Z-R) (Axial-Radial)"
+coordinate_system: "axisymmetric (Z-R) (Axial-Radial)"
 
 [numerics]
-integration_step_size:  1 m(m)
-sampling_size: 100 m(m)
+integration_step_size:  0.1 m(m)
+displacement_size: 1 m(m)
 
+sampling_size: 100 m(m)
 line_voltage:   12 (V)
 
 [coil]
-pole_radial_clearance: 1 m(m)
+magnet_radial_clearance: 1 m(m)
 
 radial_thickness: 5 m(m)
-axial_length: 20 m(m)
+axial_length: 10 m(m)
 
 wire_diameter: 0.4 m(m)
 conductivity: 63 M(S_m)
 fill_factor: 0.65
 
-[pole]
+[magnet]
 coercivity: 0.956 M(A_m)
 
-radial_thickness: 5 m(m)
+radial_thickness: 10 m(m)
 axial_length: 10 m(m)
