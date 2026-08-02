@@ -9,7 +9,8 @@ coordinate_system: "axisymmetric (Z-R) (Axial-Radial)"
 
 [numerics]
 integration_step_size:  0.1 m(m)
-displacement_size: 1 m(m)
+derivative_step_size: 0.1 m(m)
+displacement_step_size: 0.5 m(m)
 
 sampling_size: 100 m(m)
 line_voltage:   12 (V)

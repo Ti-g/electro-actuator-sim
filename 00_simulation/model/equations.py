@@ -10,8 +10,8 @@ from builtins import float as f
 from math import pi, cosh, floor
 
 
-def compute_coil_z_field_strength(
-    z_pos: f, current: f, turns: f, length: f, radius: f
+def compute_pole_field_strength(
+    pos: f, current: f, turns: f, length: f, radius: f
 ) -> f:
     """
     Computes the field strength at a position z along the coil using the 
@@ -20,15 +20,15 @@ def compute_coil_z_field_strength(
     half_length = length / 2
 
     # Calculates the axial field components via integration
-    term1 = (z_pos + half_length) / (radius ** 2 + (z_pos + half_length) ** 2) ** 0.5
-    term2 = (z_pos - half_length) / (radius ** 2 + (z_pos - half_length) ** 2) ** 0.5
+    term1 = (pos + half_length) / (radius ** 2 + (pos + half_length) ** 2) ** 0.5
+    term2 = (pos - half_length) / (radius ** 2 + (pos - half_length) ** 2) ** 0.5
 
     # Calculates maximal field strength and returns position dependent strength
     h_term = turns * current / (2 * length)
     return h_term * (term1 - term2)
 
 
-def compute_dipole_z_field_strength(z_pos: f, z_start, length: f, h_field: f, n: int = 4) -> f:
+def compute_dipole_field_strength(pos: f, start, length: f, h_field: f, n: int = 4) -> f:
     """ 
     Computes the field strength at a position z along the dipole using a sech approximation.
     finite continuous dipole model in axial-symmetric modelling (Z, R).
@@ -43,8 +43,8 @@ def compute_dipole_z_field_strength(z_pos: f, z_start, length: f, h_field: f, n:
     half_length = length / 2
 
     # Calculates the axial field components (term 1 & term 2)
-    term1 = _sech(n * ((z_pos - z_start) + half_length) / length) ** 2
-    term2 = _sech(n * ((z_pos - z_start) - half_length) / length) ** 2
+    term1 = _sech(n * ((pos - start) + half_length) / length) ** 2
+    term2 = _sech(n * ((pos - start) - half_length) / length) ** 2
 
     # Calculates the field strength at `z_pos`
     return h_field * (term1 - term2)

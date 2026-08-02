@@ -34,10 +34,10 @@ class Solver:
         # Calculates the energy one step forward and one backward
         self.current = abs(self.current) if polarity else -abs(self.current)
 
-        pos = self._compute_energy_state(z_pos + self.int_step_size, self.int_step_size)
-        neg = self._compute_energy_state(z_pos - self.int_step_size, self.int_step_size)
+        pos = self._compute_energy_state(z_pos + self.der_step_size, self.int_step_size)
+        neg = self._compute_energy_state(z_pos - self.der_step_size, self.int_step_size)
 
-        return - (pos - neg) / (2 * self.int_step_size)
+        return - (pos - neg) / (2 * self.der_step_size)
 
     def _compute_energy_state(
         self, translate: f, dz: f, epsilon: float = 1e-8, window: int = 5
@@ -82,7 +82,7 @@ class Solver:
 
     def _compute_dipole_field_strength(self, z: f, translate: f) -> f:
         """ Computes the magnetic field strength from the dipole at position z. """
-        return equations.compute_dipole_z_field_strength(
+        return equations.compute_dipole_field_strength(
             z,
             translate,
             self.magnet_axial_length,
@@ -94,8 +94,8 @@ class Solver:
         field_strength = 0.0
         half_length = self.coil_axial_length / 2
 
-        # Calculates the positive dipole
-        field_strength += equations.compute_coil_z_field_strength(
+        # Calculates the positive pole
+        field_strength += equations.compute_pole_field_strength(
             z + half_length,
             self.current,
             self.stage_turns / 2,
@@ -103,8 +103,8 @@ class Solver:
             self.coil_mean_radius
         )
 
-        # Calculates the negative dipole
-        field_strength += equations.compute_coil_z_field_strength(
+        # Calculates the negative pole
+        field_strength += equations.compute_pole_field_strength(
             z - half_length,
             - self.current,
             self.stage_turns / 2,
@@ -150,6 +150,7 @@ class Solver:
         """ Extracts qualities from attribute tree and validates units """
         # Numerical
         self.int_step_size = validate(parameters.numerics.integration_step_size, length)
+        self.der_step_size = validate(parameters.numerics.derivative_step_size, length)
         self.line_voltage = validate(parameters.numerics.line_voltage, voltage)
 
         # Coil

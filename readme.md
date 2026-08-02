@@ -11,7 +11,7 @@ A `voice-coil` actuator is an electromechanical device that produces linear moti
 </div>
 
 > [!note]
-> Editor Note: The model seems reasonable enough for now. It should be validate it if it's used for actual actuator design. I encourage anyone else to do the same.
+> Editor Note: The model seems reasonable enough for now. It should be validated if it's used for actual actuator design. I encourage anyone else to do the same.
 
 ## Mathematical Implementation
 
@@ -37,6 +37,9 @@ $$
 
 $$ H_{\text{coil}}(z) = H_{\text{pole}}(z + \ell_{\text{coil}}/2) - H_{\text{pole}}(z - \ell_{\text{coil}}/2) $$
 
+> [!important]
+> The parameter `N` is the turn density of the pole (`turns/length`).
+
 ## Computational Implementation
 
 The model was constructed using `picounits` and implements the virtual work method using the limit of the field in $(-z, z)$:
@@ -47,7 +50,7 @@ $$ \Omega = \{ z \mid |H_{\text{dipole}}(z)| > \varepsilon \quad \text{or} \quad
 
 $A_{\text{rad}}$ is the effective area through which the magnetic field passes. The force is then calculated using the finite difference approach:
 
-$$ F = - \frac{dU}{dz} \approx - \frac{U(z+\Delta z) - U(z-\Delta z)}{2\Delta z}$$
+$$ F = -\frac{dU}{dz} \approx -\frac{U(z+\Delta z) - U(z-\Delta z)}{2\Delta z}$$
 
 ## Installation
 

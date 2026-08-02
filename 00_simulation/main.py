@@ -24,7 +24,7 @@ parameters = Parser.open(parameters_path, ROOT_DIR / "metric.ut")
 solver = Solver(parameters)
 z_sample = parameters.numerics.sampling_size.stripped
 z_pos = - z_sample / 2
-step = parameters.numerics.displacement_size.stripped
+step = parameters.numerics.displacement_step_size.stripped
 
 # Prints out derived parameters for the user
 copper_losses = (solver.current / sqrt(2)) ** 2 * solver.stage_resistance
